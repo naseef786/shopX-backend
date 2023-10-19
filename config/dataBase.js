@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 // const { Subcategory, Category } = require('../models/Category');
 require('dotenv').config();
 const ATLAS_URI = process.env.ATLAS_URI
-console.log(ATLAS_URI);
+
 const connect = async () => {
     try {
       mongoose.set('strictQuery', true);

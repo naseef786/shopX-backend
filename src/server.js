@@ -13,7 +13,9 @@ const app = express();
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.use(bodyParser.json());
+
 app.use(cors());
+
 app.use('/api', categoryRoutes);
 app.use('/api', productRoutes);
 
