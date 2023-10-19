@@ -8,17 +8,41 @@ router.post('/categories', async (req, res) => {
   try {
     const  {mainCategoryName,subCategoryName,endCategory} = req.body
     console.log(mainCategoryName,subCategoryName,endCategory);
-    // const cat = Category.findOne({name:mainCategoryName})
+    let cat  = await Category.findOne({ name: mainCategoryName })
+    let end = await Subcategory.findOne({ name: endCategory } )
+    if(cat){
+    const subCategory = await Subcategory.findOne({ name: subCategoryName });
+    if(subCategory){
+      const s = await Subcategory.create({ name: endCategory, parentCategory: subCategory});
+    }else{
+      const s = await Subcategory.create({ name: subCategoryName, parentCategory: cat})
+
+      const c = await Subcategory.create({ name: endCategory, parentCategory: s});
+    }
+    res.status(201).json({message:'catgory created successfully'})
+    }else if (end){ 
+      res.status(201).json({message:'catgory created successfully'})
+    }
+    else{
+
+      const mainCategory = await Category.create({ name:mainCategoryName});
+      const subCategory = await Subcategory.create({ name: subCategoryName, parentCategory: mainCategory });
+      // const phonesSubcategory = await Subcategory.create({ name: 'Phones', parentCategory: electronicsCategory });
+      const endSubcategory = await Subcategory.create({ name:endCategory, parentCategory: subCategory });
+      // const iosSubcategory = await Subcategory.create({ name: 'iOS', parentCategory: phonesSubcategory });
+      console.log('Categories and subcategories created successfully!');
+      res.status(201).json({message:'catgory created successfully'})
+
+
+    }
+
+
     // console.log(cat);
     // if(cat) res.status(440).json({message:"alreaady exist"})
     // else{
-    const mainCategory = await Category.create({ name:mainCategoryName});
-    const subCategory = await Subcategory.create({ name: subCategoryName, parentCategory: mainCategory });
-    // const phonesSubcategory = await Subcategory.create({ name: 'Phones', parentCategory: electronicsCategory });
-    const endSubcategory = await Subcategory.create({ name:endCategory, parentCategory: subCategory });
-    // const iosSubcategory = await Subcategory.create({ name: 'iOS', parentCategory: phonesSubcategory });
-    console.log('Categories and subcategories created successfully!');
-    res.status(201).json({message:'catgory created successfully'})
+
+
+  
   
    
   } catch (error) {
