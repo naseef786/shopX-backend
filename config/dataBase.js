@@ -1,16 +1,20 @@
 const mongoose = require('mongoose');
-const { Subcategory, Category } = require('../models/Category');
-
-const connect = async()=>{
-
- 
-
-    mongoose.set('strictQuery', true)
-    // const db = await mongoose.connect(getUri);
-    const db = await mongoose.connect('mongodb://127.0.0.1:27017/ShopX');
-    console.log("Database Connected")
-    return db;
-}
+// const { Subcategory, Category } = require('../models/Category');
+require('dotenv').config();
+const ATLAS_URI = process.env.ATLAS_URI
+console.log(ATLAS_URI);
+const connect = async () => {
+    try {
+      mongoose.set('strictQuery', true);
+      const db = await mongoose.connect(ATLAS_URI);
+      console.log('Database Connected');
+      return db;
+    } catch (error) {
+      console.error('Error connecting to database:', error);
+      throw error; // Re-throw the error for higher-level handling
+    }
+  };
+  
 
 
 // const initializeCategories = async () => {

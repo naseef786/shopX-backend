@@ -6,45 +6,33 @@ const router = express.Router();
 
 router.post('/categories', async (req, res) => {
   try {
-    const  {mainCategoryName,subCategoryName,endCategory} = req.body
-    console.log(mainCategoryName,subCategoryName,endCategory);
-    let cat  = await Category.findOne({ name: mainCategoryName })
-    let end = await Subcategory.findOne({ name: endCategory } )
-    if(cat){
-    const subCategory = await Subcategory.findOne({ name: subCategoryName });
-    if(subCategory){
-      const s = await Subcategory.create({ name: endCategory, parentCategory: subCategory});
-    }else{
-      const s = await Subcategory.create({ name: subCategoryName, parentCategory: cat})
+    const { mainCategoryName, subCategoryName, endCategory } = req.body
+    console.log(mainCategoryName, subCategoryName, endCategory);
+    let cat = await Category.findOne({ name: mainCategoryName })
+    let end = await Subcategory.findOne({ name: endCategory })
+    if (cat) {
+      const subCategory = await Subcategory.findOne({ name: subCategoryName });
+      if (subCategory) {
+        const s = await Subcategory.create({ name: endCategory, parentCategory: subCategory });
+      } else {
+        const s = await Subcategory.create({ name: subCategoryName, parentCategory: cat })
 
-      const c = await Subcategory.create({ name: endCategory, parentCategory: s});
+        const c = await Subcategory.create({ name: endCategory, parentCategory: s }).then((error)=>{
+          res.status(401).json({ message: 'catgory not successfully' })
+        });
+      }
+      res.status(201).json({ message: 'catgory created successfully' })
+    } else if (end) {
+      res.status(201).json({ message: 'catgory created successfully' })
     }
-    res.status(201).json({message:'catgory created successfully'})
-    }else if (end){ 
-      res.status(201).json({message:'catgory created successfully'})
-    }
-    else{
-
-      const mainCategory = await Category.create({ name:mainCategoryName});
+    else {
+      const mainCategory = await Category.create({ name: mainCategoryName });
       const subCategory = await Subcategory.create({ name: subCategoryName, parentCategory: mainCategory });
-      // const phonesSubcategory = await Subcategory.create({ name: 'Phones', parentCategory: electronicsCategory });
-      const endSubcategory = await Subcategory.create({ name:endCategory, parentCategory: subCategory });
-      // const iosSubcategory = await Subcategory.create({ name: 'iOS', parentCategory: phonesSubcategory });
+      const endSubcategory = await Subcategory.create({ name: endCategory, parentCategory: subCategory });
       console.log('Categories and subcategories created successfully!');
-      res.status(201).json({message:'catgory created successfully'})
-
-
+      res.status(201).json({ message: 'catgory created successfully' })
     }
 
-
-    // console.log(cat);
-    // if(cat) res.status(440).json({message:"alreaady exist"})
-    // else{
-
-
-  
-  
-   
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -66,33 +54,4 @@ module.exports = router;
 
 
 
-// // Create a new category
-// router.post('/categories', async (req, res) => {
-//   const { name, parentId } = req.body;
-
-//   try {
-//     const parentCategory = parentId ? await Category.findById(parentId) : null;
-
-//     const newCategory = new Category({
-//       name,
-//       parent: parentCategory,
-//     });
-
-//     await newCategory.save();
-
-//     res.json(newCategory);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // Get all categories
-// router.get('/categories', async (req, res) => {
-//   try {
-//     const categories = await Category.find().populate('parent');
-//     res.json(categories);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
 
